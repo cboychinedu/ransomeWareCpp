@@ -27,7 +27,7 @@ void encryptFilesRecursively(const std::filesystem::path& path, const std::strin
         }
 
         // Prepare output file name
-        std::string outputFile = path.string() + ".enc"; // Append .enc to the original file name
+        std::string outputFile = path.string() + ".dat"; // Append .enc to the original file name
 
         // Encrypt the file
         std::cout << "Encrypting file: " << path.filename() << std::endl;
@@ -97,3 +97,13 @@ int main() {
     // closing up 
     return 0; 
 }
+
+
+
+// Example usage (add this to a main function for a complete example)
+// int main() {
+//     // Make sure 'input.txt' exists with some content.
+//     // The key must be exactly 32 characters long.
+//     encrypt("input.txt", "encrypted.dat", "01234567890123456789012345678901");
+//     return 0;
+// }
